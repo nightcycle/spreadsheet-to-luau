@@ -1,22 +1,10 @@
 from cx_Freeze import setup,Executable
 
 
-includefiles = ['README.md'] #, 'src', 'helpers\uncompress\unRAR.exe', , 'helpers\uncompress\unzip.exe']
+includefiles = ['README.md']
 includes: list[str] = []
 excludes: list[str] = ["virtualenv", "mypy"]
-packages: list[str] = [
-	# "json",
-	# "requests",
-	# "re",
-	# "os",
-	# "shutil",
-	# "math",
-	# "sys",
-	# "pandas",
-	# "typing",
-	# "dataretriever",
-	# "luau"
-]
+packages: list[str] = []
 
 setup(
     name = 'spreadsheet-to-luau',
@@ -33,5 +21,5 @@ setup(
 			'include_files':includefiles
 		}
 	}, 
-    executables = [Executable('src/__init__.py')]
+    executables = [Executable(script='src/__init__.py', target_name="spreadsheet-to-luau")]
 )
