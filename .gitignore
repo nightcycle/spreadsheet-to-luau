@@ -1,0 +1,5 @@
+spreadsheet-to-luau/**
+src/__pycache__/**
+build/**
+dist/**
+env/**
