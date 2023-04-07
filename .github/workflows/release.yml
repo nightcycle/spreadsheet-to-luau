@@ -25,17 +25,20 @@ jobs:
     needs: create_release
     strategy:
       matrix:
-        os: [windows-latest, ubuntu-latest, macOS-latest]
+        os: [windows-latest] # ubuntu-latest, macOS-latest]
         include:
           - os: windows-latest
             exe_name: spreadsheet-to-luau.exe
             asset_content_type: application/octet-stream
-          - os: ubuntu-latest
-            exe_name: spreadsheet-to-luau
-            asset_content_type: application/octet-stream
-          - os: macOS-latest
-            exe_name: spreadsheet-to-luau
-            asset_content_type: application/octet-stream
+            build_command: pyinstaller --onefile src/__init__.py -n spreadsheet-to-luau
+          # - os: ubuntu-latest
+          #   exe_name: spreadsheet-to-luau
+          #   asset_content_type: application/octet-stream
+          #   build_command: idk yet
+          # - os: macOS-latest
+          #   exe_name: spreadsheet-to-luau
+          #   asset_content_type: application/octet-stream
+          #   build_command: idk yet
 
     runs-on: ${{ matrix.os }}
     steps:
@@ -53,12 +56,12 @@ jobs:
 
       - name: Build exe file
         run: |
-          pyinstaller --onefile src/__init__.py -n spreadsheet-to-luau
+          ${{ matrix.build_command }}
 
       - name: Upload exe file to Release
         uses: actions/upload-release-asset@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
         with:
           upload_url: ${{ needs.create_release.outputs.upload_url }}
           asset_path: dist/${{ matrix.exe_name }}
