@@ -42,7 +42,7 @@ return {
 } :: {[number]: EntryData}
 ```
 
-## Converting CSV / XSLX
+## Converting CSV / XLSX
 The first argument should be the path to the source file (when one is needed), the output path is then provided following the -o marker. 
 
 ### CSV
