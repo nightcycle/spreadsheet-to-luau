@@ -4,8 +4,9 @@ With this you can make sure that the scripts in your game are always reading fro
 It should be able to be installed with Aftman and Foreman, otherwise it is downloadable as an exe under releases for manual addition to your path environment.
 
 ## Demo
-This tool takes a csv / xlsx / google sheet and converts it into a strictly typed roblox modulescript.
+This tool takes a csv / xlsx / google sheet and converts it into a strictly typed roblox modulescript. 
 
+This is an example CSV file:
 ```csv
 a, b, c
 1, 2, 3
@@ -13,7 +14,7 @@ a, b, c
 7, 8, 9
 ```
 
-is be converted into and exported as 
+This is the type of script the tool generates:
 ```lua
 --!strict
 export type EntryData = {
