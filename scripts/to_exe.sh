@@ -1,3 +1,4 @@
 #!/bin/bash
 # python src/setup.py install
-pyinstaller src/__init__.py
+pyinstaller --onefile src/__init__.py -n spreadsheet-to-luau
+# pyinstaller __init__.spec

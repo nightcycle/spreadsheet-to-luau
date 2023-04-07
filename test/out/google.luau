@@ -1,5 +1,8 @@
 --!strict
-export type Data = {
+-- this script was generated using spreadsheet-to-luau
+-- manual editing not recommended
+
+export type EntryData = {
 	Id: string,
 	VehicleCompatibility: string,
 	Name: string,
@@ -22,7 +25,7 @@ export type Data = {
 	MaintenanceCost: number,
 }
 
-export type DataKeys = "Rail_Callisto" | "Rail_Denver" | "HighSpeedRail_Pacifique" | "Monorail_Gulf" | "MaglevRail_Magnus" | "HyperloopRail_Gigapod" | "Road_Marauder"
+export type EntryDataKeys = "Rail_Callisto" | "Rail_Denver" | "HighSpeedRail_Pacifique" | "Monorail_Gulf" | "MaglevRail_Magnus" | "HyperloopRail_Gigapod" | "Road_Marauder"
 return {
 	["Rail_Callisto"] = {
 		["Id"] = "Rail_Callisto",
@@ -178,4 +181,4 @@ return {
 		["ConstructionCost"] = 70.0,
 		["MaintenanceCost"] = 4.666666666666667,
 	},
-} :: {[DataKeys]: Data}
+} :: {[EntryDataKeys]: EntryData}

@@ -1,5 +1,5 @@
-import dataretriever
-import luau
+import src.dataretriever as dataretriever
+import src.luautranslate as luautranslate
 import os
 import shutil
 import math
@@ -19,7 +19,9 @@ REMOVE_SPACE_FROM_COLUMN_TAG_NAME = PREFIX+"nospace"
 GOOGLE_SHEET_ID_PARAM_NAME = PREFIX+"sheet"
 GOOGLE_PAGE_ID_PARAM_NAME = PREFIX+"page"
 OUT_PATH_PARAM_NAME = PREFIX+"o"
-MAX_ENTRY_PER_SCRIPT_COUNT = 250
+LIMIT_PARAM_NAME = PREFIX+"split"
+TYPE_PARAM_NAME = PREFIX+"type"
+TOP_COMMENT = "\n-- this script was generated using spreadsheet-to-luau\n-- manual editing not recommended\n"
 
 # parse command
 input_mode: InputModeType | None = None
@@ -29,6 +31,8 @@ remove_space_enabled = False
 google_sheet_id: None | str = None
 google_page_id: None | str = None
 out_path: None | str = None
+entries_per_page_limit: int = 250
+entry_type_name: None | str = None
 
 assert len(sys.argv) > 1, "no arguments provided"
 
@@ -60,7 +64,10 @@ for i, arg in enumerate(sys.argv):
 				google_page_id = sys.argv[i+1]
 			elif OUT_PATH_PARAM_NAME == key:
 				out_path = sys.argv[i+1]
-
+			elif LIMIT_PARAM_NAME == key:
+				entries_per_page_limit = int(sys.argv[i+1])
+			elif TYPE_PARAM_NAME == key:
+				entry_type_name = sys.argv[i+1]
 # run command
 # print(f"input_mode: {input_mode}")
 # print(f"input_path: {input_path}")
@@ -71,8 +78,11 @@ for i, arg in enumerate(sys.argv):
 # print(f"out_path: {out_path}")
 
 def write_data(data: dict[str, dict] | list[dict], type_data: dict):
-	type_name = "Data"
-	type_str = f"export type {type_name} = " + luau.dump_type(type_data, add_comma_at_end=False)
+	type_name = "EntryData"
+	if entry_type_name != None:
+		assert entry_type_name
+		type_name = entry_type_name
+	type_str = f"export type {type_name} = " + luautranslate.dump_type(type_data, add_comma_at_end=False)
 	type_ending = ""
 	if type(data) == list:
 		type_ending = " :: {[number]: "+type_name+"}"
@@ -81,7 +91,7 @@ def write_data(data: dict[str, dict] | list[dict], type_data: dict):
 
 	if out_path == None:
 		print("-- no out path provided")
-		print(luau.dump(f"return {luau.dump(data)}"))
+		print(luautranslate.dump(f"return {luautranslate.dump(data)}"))
 	else:
 		assert out_path
 		print(f"writing to {out_path}")
@@ -110,32 +120,32 @@ def write_data(data: dict[str, dict] | list[dict], type_data: dict):
 			type_str += "\n\n" + key_type
 			type_ending = " :: {["+key_type_name+"]: "+type_name+"}"
 
-		if entry_count < MAX_ENTRY_PER_SCRIPT_COUNT:
+		if entry_count < entries_per_page_limit:
 			out_file = open(out_path, "w")
-			out_file.write(f"--!strict\n{type_str}\nreturn {luau.dump(data)}{type_ending}")
+			out_file.write(f"--!strict{TOP_COMMENT}\n{type_str}\nreturn {luautranslate.dump(data)}{type_ending}")
 			out_file.close()
 		else:
 			os.makedirs(base_path)
-			sub_file_count = math.ceil(entry_count / MAX_ENTRY_PER_SCRIPT_COUNT)
+			sub_file_count = math.ceil(entry_count / entries_per_page_limit)
 
 			for i in range(1, sub_file_count):
-				start_index = (i-1) * MAX_ENTRY_PER_SCRIPT_COUNT
-				finish_index = start_index+MAX_ENTRY_PER_SCRIPT_COUNT-1
+				start_index = (i-1) * entries_per_page_limit
+				finish_index = start_index+entries_per_page_limit-1
 				sub_data_list = []
 				sub_data_dict = {}
 				sub_file = open(base_path+"/"+str(i)+path_ext, "w")
 				if type(data) == list:
 					sub_data_list = data[start_index:finish_index]
-					sub_file.write(f"--!strict\nreturn {luau.dump(sub_data_list)}")
+					sub_file.write(f"--!strict{TOP_COMMENT}\nreturn {luautranslate.dump(sub_data_list)}")
 				else:
 					assert type(data) == dict
 					keys = list(data.keys())[start_index:finish_index]
 					for key in keys:
 						sub_data_dict[key] = data[key]
-					sub_file.write(f"--!strict\nreturn {luau.dump(sub_data_dict)}")
+					sub_file.write(f"--!strict{TOP_COMMENT}\nreturn {luautranslate.dump(sub_data_dict)}")
 				sub_file.close()
 			
-			out_text = f"--!strict\n{type_str}\n" + "\nlocal out = {}\n"
+			out_text = f"--!strict{TOP_COMMENT}\n{type_str}\n" + "\nlocal out = {}\n"
 			for i in range(1, sub_file_count):
 				
 				if type(data) == list:

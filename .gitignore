@@ -3,4 +3,4 @@ src/__pycache__/**
 build/**
 dist/**
 env/**
-__init__.spec
+*.spec
