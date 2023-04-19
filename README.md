@@ -3,7 +3,46 @@ With this you can make sure that the scripts in your game are always reading fro
 
 It should be able to be installed with Aftman and Foreman, otherwise it is downloadable as an exe under releases for manual addition to your path environment.
 
-## Converting CSV / XSLX
+## Demo
+This tool takes a csv / xlsx / google sheet and converts it into a strictly typed roblox modulescript. 
+
+This is an example CSV file:
+```csv
+a, b, c
+1, 2, 3
+4, 5, 6
+7, 8, 9
+```
+
+This is the type of script the tool generates:
+```lua
+--!strict
+export type EntryData = {
+  a: number,
+  b: number,
+  c: number
+}
+
+return {
+  {
+    a = 1,
+    b = 2,
+    c = 3,
+  },
+  {
+    a = 4,
+    b = 5,
+    c = 6,
+  },
+  {
+    a = 7,
+    b = 8,
+    c = 9
+  }
+} :: {[number]: EntryData}
+```
+
+## Converting CSV / XLSX
 The first argument should be the path to the source file (when one is needed), the output path is then provided following the -o marker. 
 
 ### CSV
