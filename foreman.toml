@@ -1,2 +1,2 @@
 [tools]
-remodel = {source = "nightcycle/spreadsheet-to-luau", 		version = "0.11.0" }
+spreadsheet-to-luau = {source = "nightcycle/spreadsheet-to-luau", 		version = "1.0.1" }
