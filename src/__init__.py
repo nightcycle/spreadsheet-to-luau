@@ -22,6 +22,7 @@ GOOGLE_PAGE_ID_PARAM_NAME = PREFIX+"page"
 OUT_PATH_PARAM_NAME = PREFIX+"o"
 LIMIT_PARAM_NAME = PREFIX+"split"
 TYPE_PARAM_NAME = PREFIX+"type"
+VERBOSE_TAG = PREFIX+"verbose"
 TOP_COMMENT = "\n-- this script was generated using spreadsheet-to-luau\n-- manual editing not recommended\n"
 
 def main():
@@ -36,7 +37,7 @@ def main():
 	out_path: None | str = None
 	entries_per_page_limit: int = 250
 	entry_type_name: None | str = None
-
+	is_verbose = VERBOSE_TAG in sys.argv
 	assert len(sys.argv) > 1, "no arguments provided"
 
 	for i, arg in enumerate(sys.argv):
@@ -173,7 +174,8 @@ def main():
 			google_sheet_id, 
 			google_page_id, 
 			id_column_name,
-			remove_space_enabled
+			remove_space_enabled,
+			is_verbose
 		)
 		write_data(data, type_data)
 
@@ -181,7 +183,7 @@ def main():
 		assert input_path
 		# print(f"running {input_mode}")
 		csv_df: DataFrame = pd.read_csv(input_path)
-		data, type_data = dataretriever.get_df_data(csv_df, id_column_name, remove_space_enabled)
+		data, type_data = dataretriever.get_df_data(csv_df, id_column_name, remove_space_enabled, is_verbose)
 		write_data(data, type_data)
 
 	elif input_mode == "xlsx":
@@ -191,7 +193,7 @@ def main():
 		# print(f"running {input_mode}")
 		# print(f"sheet {google_sheet_id}")
 		xlsx_df: DataFrame = pd.read_excel(input_path)
-		data, type_data = dataretriever.get_df_data(xlsx_df, id_column_name, remove_space_enabled)
+		data, type_data = dataretriever.get_df_data(xlsx_df, id_column_name, remove_space_enabled, is_verbose)
 		write_data(data, type_data)
 
 # prevent from running twice

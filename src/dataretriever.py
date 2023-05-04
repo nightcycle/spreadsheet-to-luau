@@ -43,7 +43,8 @@ GOOGLE_TYPE_TRANSLATIONS: dict[GoogleSheetDataType, RobloxLuauType] = {
 def get_df_data(
 	df: DataFrame,
 	id_column_name: str | None = None,
-	remove_spaces_from_column_name=True
+	remove_spaces_from_column_name=True,
+	is_verbose=False
 ) -> tuple[dict[str, dict] | list[dict], dict[str, RobloxLuauType]]:
 		
 	# format the id column
@@ -97,7 +98,8 @@ def get_google_sheet_data(
 	sheet_id: str, 
 	page_id: str, 
 	id_column_name: str | None = None,
-	remove_spaces_from_column_name=True
+	remove_spaces_from_column_name=True,
+	is_verbose=False
 ) -> tuple[dict[str, dict] | list[dict], dict[str, RobloxLuauType]]:
 	url = f"https://docs.google.com/spreadsheets/d/{sheet_id}/gviz/tq?tqx=out:json&gid={page_id}"
 
@@ -135,14 +137,19 @@ def get_google_sheet_data(
 	out_dict: dict[str, dict] = {}
 	out_list: list[dict] = []
 	# format edit rows
-	for row_data in google_table_data["rows"]:
+	for row_index, row_data in enumerate(google_table_data["rows"]):
 		entry: dict = {}
 
 		for column_index, cell in enumerate(row_data["c"]):
-			value = cell["v"]
-			column_name = column_names[column_index]
-			column_type = column_types[column_index]	
-			entry[column_name] = value
+			
+			if is_verbose:
+				print(f"[{column_index},{row_index}]", cell)
+
+			if cell != None:
+				value = cell["v"]
+				column_name = column_names[column_index]
+				column_type = column_types[column_index]	
+				entry[column_name] = value
 			
 		if id_column_name != None:
 			assert id_column_name
