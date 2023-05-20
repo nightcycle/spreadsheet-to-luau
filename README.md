@@ -95,10 +95,26 @@ spreadsheet-to-luau -sheet SHEET_ID -o path/to/luau/script.luau -id Name
 ```
 If you don't include this tag it will simply write the final luau table in list format in the order which they were arranged in the source.
 
-### Specify Entries Per Sub-Module
-For those using a rojo workflow, larger scripts can fail to sync. To avoid this issue when a spreadsheet has more than 250 entries it will split into smaller sheets which are then compiled into a higher-level sheet. It shouldn't change any external usage, however in instances where the 250 entries have a ton of data it can still cause a rojo failure. Because of this you can configure the split size with the -split marker.
+### Specify Subdivisions
+If you have a ton of entries you want to import across multiple modules, you can organize them with the -sub marker.
 ```bash
-spreadsheet-to-luau -sheet SHEET_ID -o path/to/luau/script.luau -split 100
+spreadsheet-to-luau -sheet SHEET_ID -o Test.luau -sub Class -sub Species
+```
+The above example will write it as a series of directory organized scripts like so:
+```
+| Test
+	| Heavy
+		| Alien.luau
+		| Human.luau
+		| Zombie.luau
+	| Sniper
+		| Alien.luau
+		| Human.luau
+		| Zombie.luau	
+	| Pyro
+		| Alien.luau
+		| Human.luau
+		| Zombie.luau
 ```
 
 ### Type Exporting
