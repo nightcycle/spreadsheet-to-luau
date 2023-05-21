@@ -2,6 +2,7 @@ import json
 import requests
 from pandas import DataFrame
 from typing import TypedDict, Any, Literal
+from luau.convert import mark_as_literal
 
 # create a balance file
 GoogleSheetStatus = Literal["ok"]
@@ -65,13 +66,13 @@ def get_df_data(
 				k = k.replace(" ", "")
 			if not k in type_data:
 				if type(v) == str:
-					type_data[k] = "string"
+					type_data[k] = mark_as_literal("string")
 				elif type(v) == bool:
-					type_data[k] = "boolean"
+					type_data[k] = mark_as_literal("boolean")
 				elif type(v) == int:
-					type_data[k] = "number"
+					type_data[k] = mark_as_literal("number")
 				elif type(v) == float:
-					type_data[k] = "number"
+					type_data[k] = mark_as_literal("number")
 				
 			entry[k] = v
 		
@@ -132,7 +133,7 @@ def get_google_sheet_data(
 			label_name = label_name.replace(" ", "")
 
 		column_names.append(label_name)
-		type_data[label_name] = roblox_type
+		type_data[label_name] = mark_as_literal(roblox_type)
 
 	out_dict: dict[str, dict] = {}
 	out_list: list[dict] = []
