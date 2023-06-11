@@ -108,9 +108,12 @@ def get_google_sheet_data(
 	response = requests.get(url, headers={
 		"X-DataSource-Auth": "true"
 	})
-	assert response.status_code == 200, 'wrong status code'
+	assert response.status_code == 200, 'wrong status code: '+response.content.decode('utf8')
 
-	google_sheet_data: GoogleSheetData = json.loads(response.content.decode('utf8').replace("'", '"').replace(')]}"', ""))
+	try:
+		google_sheet_data: GoogleSheetData = json.loads(response.content.decode('utf8').replace("'", '"').replace(')]}"', ""))
+	except:
+		raise ValueError("Bad response: "+str(response.content.decode('utf8')))
 	google_table_data: GoogleSheetDataTable = google_sheet_data["table"]
 	
 	# format the id column
